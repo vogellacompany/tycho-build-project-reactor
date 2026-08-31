@@ -25,14 +25,8 @@ Modules are emitted in filesystem order because Tycho sorts the reactor from the
 
 ## Using it
 
-The extension cannot be built by the reactor that uses it, so install it first:
-
-```bash
-git clone https://github.com/vogellacompany/tycho-build-project-reactor
-mvn -f tycho-build-project-reactor install
-```
-
-Then declare it in `.mvn/extensions.xml` of the consuming repository, next to tycho-build:
+The extension cannot be built by the reactor that uses it, it is released to Maven Central and resolved like any other artifact.
+Declare it in `.mvn/extensions.xml` of the consuming repository, next to tycho-build:
 
 ```xml
 <extensions>
@@ -44,7 +38,7 @@ Then declare it in `.mvn/extensions.xml` of the consuming repository, next to ty
 	<extension>
 		<groupId>com.vogella.tycho</groupId>
 		<artifactId>tycho-build-project-reactor</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>1.0.0</version>
 	</extension>
 </extensions>
 ```
@@ -63,19 +57,19 @@ Add `build/` to `.gitignore`.
 `examples/minimal-reactor` is a runnable example: `mvn validate` in that folder builds a reactor of four projects out of a root POM that names a single module.
 It also shows the version indirection described below.
 
-### Making it resolvable
+### Where it is resolved from
 
 Core extensions are resolved before any POM is read, from the repositories of `settings.xml` plus Maven Central (`BootstrapCoreExtensionManager` uses `MavenExecutionRequest#getPluginArtifactRepositories`).
 A `<repository>` in the consuming `pom.xml` therefore cannot serve this artifact, and GitHub Packages needs a token even for public reads, which breaks anonymous clones and CI.
 
-Two routes work without asking anything of the person who clones:
+Two routes work without asking anything of the person who clones, and an unreleased build needs the second one:
 
-* deploy the artifact to Maven Central, and declare it in `.mvn/extensions.xml` as shown above.
-* commit the jar to the consuming repository and skip the resolution entirely:
+* resolve it from Maven Central, as shown above. See [RELEASING.md](RELEASING.md) for how a release is cut.
+* build the extension with `mvn install`, or commit the jar to the consuming repository, and skip the resolution entirely:
 
 ```
 # .mvn/maven.config
--Dmaven.ext.class.path=${maven.multiModuleProjectDirectory}/.mvn/lib/tycho-build-project-reactor-1.0.0-SNAPSHOT.jar
+-Dmaven.ext.class.path=${maven.multiModuleProjectDirectory}/.mvn/lib/tycho-build-project-reactor-1.0.0.jar
 ```
 
 The jar then goes into Maven's shared `maven.ext` realm and needs no entry in `.mvn/extensions.xml` at all.
@@ -148,7 +142,7 @@ mvn clean install
 The `@Named @Singleton` components are only visible to Maven through the Sisu index that `sisu-maven-plugin:main-index` writes, so the jar must contain `META-INF/sisu/javax.inject.Named`:
 
 ```bash
-unzip -p target/tycho-build-project-reactor-1.0.0-SNAPSHOT.jar META-INF/sisu/javax.inject.Named
+unzip -p target/tycho-build-project-reactor-1.0.0.jar META-INF/sisu/javax.inject.Named
 ```
 
 ## License

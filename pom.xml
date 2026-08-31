@@ -5,10 +5,34 @@
 
 	<groupId>com.vogella.tycho</groupId>
 	<artifactId>tycho-build-project-reactor</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.0</version>
 
 	<name>Tycho project reactor extension</name>
 	<description>Maven core extension that discovers Eclipse modules recursively and feeds them into the Tycho reactor.</description>
+	<url>https://github.com/vogellacompany/tycho-build-project-reactor</url>
+
+	<licenses>
+		<license>
+			<name>Eclipse Public License - v 2.0</name>
+			<url>https://www.eclipse.org/legal/epl-2.0/</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Lars Vogel</name>
+			<email>Lars.Vogel@vogella.com</email>
+			<organization>vogella GmbH</organization>
+			<organizationUrl>https://www.vogella.com</organizationUrl>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:https://github.com/vogellacompany/tycho-build-project-reactor.git</connection>
+		<developerConnection>scm:git:git@github.com:vogellacompany/tycho-build-project-reactor.git</developerConnection>
+		<url>https://github.com/vogellacompany/tycho-build-project-reactor</url>
+	</scm>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -48,4 +72,65 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<!-- Everything Maven Central requires on top of the normal build. -->
+		<profile>
+			<id>release</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<version>3.4.0</version>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<goals>
+									<goal>jar-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<version>3.12.0</version>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>3.2.8</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.sonatype.central</groupId>
+						<artifactId>central-publishing-maven-plugin</artifactId>
+						<version>0.11.0</version>
+						<extensions>true</extensions>
+						<configuration>
+							<publishingServerId>central</publishingServerId>
+							<autoPublish>false</autoPublish>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
