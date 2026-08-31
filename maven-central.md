@@ -37,16 +37,28 @@ Put them into `~/.m2/settings.xml` under the id the POM refers to:
 
 ### 3. Publish the signing key
 
-Central verifies the signature against a public key server, so the key that signs the artifacts has to be uploaded once.
-The existing vogella GmbH key can be used for this, the same key that signs anything else.
+Central verifies the signature against a public key server, so the public half of the signing key has to be uploaded once.
+Generating a key only writes it to `~/.gnupg`, nothing is published by that alone.
+The existing vogella GmbH key is used, the same key that signs anything else.
+
+**Done for `4268D739E67F5C96C319E0A9E116269EA1FCBC1C`**, with:
 
 ```bash
 gpg --keyserver keys.openpgp.org --send-keys 4268D739E67F5C96C319E0A9E116269EA1FCBC1C
-gpg --keyserver keyserver.ubuntu.com --send-keys 4268D739E67F5C96C319E0A9E116269EA1FCBC1C
 ```
 
-`keys.openpgp.org` only serves the user id after the address in it has been confirmed by mail, so check with
-`curl -sI https://keys.openpgp.org/vks/v1/by-fingerprint/4268D739E67F5C96C319E0A9E116269EA1FCBC1C` before releasing.
+Verify that a key is served before releasing:
+
+```bash
+curl -sI https://keys.openpgp.org/vks/v1/by-fingerprint/<fingerprint>   # 200 is what Central needs
+curl -sI https://keys.openpgp.org/vks/v1/by-email/<address>             # 404 until the address is confirmed by mail
+```
+
+Only the first lookup matters for publishing, Central resolves the key by id.
+A key can also be mirrored to `keyserver.ubuntu.com` with the same `--send-keys` call, which is a second source but not a requirement.
+
+An upload cannot be taken back: `keys.openpgp.org` lets the identity be deleted, the key material stays retrievable by fingerprint, and other key servers delete nothing.
+Revocation, not deletion, is the way out.
 
 The vogella key is an ed25519 key.
 Should the Portal reject the signature as an unsupported algorithm, sign that one release with an RSA 4096 key instead, it is the only case where a second key is needed.

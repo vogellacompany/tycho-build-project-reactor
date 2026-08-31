@@ -64,7 +64,7 @@ A `<repository>` in the consuming `pom.xml` therefore cannot serve this artifact
 
 Two routes work without asking anything of the person who clones, and an unreleased build needs the second one:
 
-* resolve it from Maven Central, as shown above. See [RELEASING.md](RELEASING.md) for how a release is cut.
+* resolve it from Maven Central, as shown above. See [maven-central.md](maven-central.md) for how a release is cut.
 * build the extension with `mvn install`, or commit the jar to the consuming repository, and skip the resolution entirely:
 
 ```
