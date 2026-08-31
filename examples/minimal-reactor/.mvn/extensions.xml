@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extensions>
+	<extension>
+		<groupId>org.eclipse.tycho</groupId>
+		<artifactId>tycho-build</artifactId>
+		<version>${tycho.version}</version>
+	</extension>
+	<extension>
+		<groupId>com.vogella.tycho</groupId>
+		<artifactId>tycho-build-project-reactor</artifactId>
+		<version>${reactor.version}</version>
+	</extension>
+</extensions>

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature id="com.example.feature" label="Example Feature" version="1.0.0.qualifier">
+	<plugin id="com.example.core" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
+</feature>
