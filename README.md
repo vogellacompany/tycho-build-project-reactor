@@ -63,6 +63,24 @@ Add `build/` to `.gitignore`.
 `examples/minimal-reactor` is a runnable example: `mvn validate` in that folder builds a reactor of four projects out of a root POM that names a single module.
 It also shows the version indirection described below.
 
+### Making it resolvable
+
+Core extensions are resolved before any POM is read, from the repositories of `settings.xml` plus Maven Central (`BootstrapCoreExtensionManager` uses `MavenExecutionRequest#getPluginArtifactRepositories`).
+A `<repository>` in the consuming `pom.xml` therefore cannot serve this artifact, and GitHub Packages needs a token even for public reads, which breaks anonymous clones and CI.
+
+Two routes work without asking anything of the person who clones:
+
+* deploy the artifact to Maven Central, and declare it in `.mvn/extensions.xml` as shown above.
+* commit the jar to the consuming repository and skip the resolution entirely:
+
+```
+# .mvn/maven.config
+-Dmaven.ext.class.path=${maven.multiModuleProjectDirectory}/.mvn/lib/tycho-build-project-reactor-1.0.0-SNAPSHOT.jar
+```
+
+The jar then goes into Maven's shared `maven.ext` realm and needs no entry in `.mvn/extensions.xml` at all.
+Use `${maven.multiModuleProjectDirectory}`, which Maven interpolates here: a relative path is resolved against the working directory, so a build started from a module folder loads no extension and silently builds without the discovered reactor.
+
 ### Options
 
 | Property | Default | Meaning |
